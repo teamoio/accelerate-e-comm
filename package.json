@@ -7,14 +7,17 @@
     "server:dev": "cd backend && npm run start:dev",
     "server:prod": "cd backend && npm run start:prod",
     "server-install": "cd backend && npm install",
+    "server-build": "cd backend && npm run build",
     "start": "cd frontend && npm run start",
     "client": "cd frontend && npm start",
     "client-install": "cd frontend && npm install",
+    "client-build": "cd frontend && npm run build",
     "upgrade": "npm run server-install && npm run client-install",
     "dev": "concurrently \"npm run server:dev\" \"npm run start\"",
+    "build": "npm run server-build && npm run client-build",
     "prod": "concurrently \"npm run server:prod\" \"npm run start\"",
     "setup": "npm install && npm run client-install && npm run server-install && npm run dev",
-    "deploy": "npm install && npm run client-install && npm run server-install && npm run prod"
+    "deploy": "npm install && npm run client-install && npm run server-install && npm run build && npm run prod"
   },
   "repository": {
     "type": "git",

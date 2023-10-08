@@ -1,17 +1,20 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
+import entityRegistrar from "./entityRegister";
 dotenv.config();
+
 export const AppDataSource = new DataSource({
   //TODO: Fetch these values from .env
-  type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: "kamran.shahid",
-  password: "",
-  database: "test",
+  // @ts-ignore Couldn't find suitable
+  type: process.env.DB_TYPE || "postgres",
+  host: process.env.DB_HOST || "localhost",
+  port: (process.env.DB_PORT as number | undefined) || 5432,
+  username: process.env.DB_USERNAME || "kamran.shahid",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_DATABASE || "test",
   logging: true,
   synchronize: true,
-  entities: ["modules/*/*.entity{.ts,.js}"],
+  entities: entityRegistrar(),
 });
 
 const dbConnect = () => {
