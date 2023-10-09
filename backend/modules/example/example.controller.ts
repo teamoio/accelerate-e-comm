@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../database/dbConnect";
-import { Example } from "./example.entity";
+import { Example } from "../../entities/example";
 
 const exampleRepo = AppDataSource.getRepository(Example);
 

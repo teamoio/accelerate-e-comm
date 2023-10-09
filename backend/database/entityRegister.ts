@@ -1,6 +1,5 @@
-import { Example } from "../modules/example/example.entity";
-import { Person } from "../modules/example/person.entity";
+import { Example } from "../entities/example";
 
-const entityRegistrar = () => [Example, Person];
+const entityRegistrar = () => [Example];
 
 export default entityRegistrar;

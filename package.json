@@ -4,8 +4,8 @@
   "description": "An E-commerce MERN stack application",
   "main": "index.js",
   "scripts": {
-    "server:dev": "cd backend && npm run start:dev",
-    "server:prod": "cd backend && npm run start:prod",
+    "server:dev": "cd backend && npm run server:dev",
+    "server:prod": "cd backend && npm run server:prod",
     "server-install": "cd backend && npm install",
     "server-build": "cd backend && npm run build",
     "start": "cd frontend && npm run start",
@@ -16,8 +16,16 @@
     "dev": "concurrently \"npm run server:dev\" \"npm run start\"",
     "build": "npm run server-build && npm run client-build",
     "prod": "concurrently \"npm run server:prod\" \"npm run start\"",
-    "setup": "npm install && npm run client-install && npm run server-install && npm run dev",
-    "deploy": "npm install && npm run client-install && npm run server-install && npm run build && npm run prod"
+    "setup": "npm install && npm run server-install && npm run migration:run && npm run dev",
+    "deploy": "npm install && npm run client-install && npm run server-install && npm run build && npm run migration:run && npm run prod",
+    "migration:run": "cd backend && ts-node ./node_modules/typeorm/cli.js migration:run -d ./database/dbConnect.ts",
+    "migration:revert": "cd backend && ts-node ./node_modules/typeorm/cli.js migration:revert -d ./database/dbConnect.ts",
+    "schema:sync": "cd backend && npm run typeorm schema:sync -- -d ./database/dbConnect.ts",
+    "migration:show": "cd backend && npm run typeorm migration:show -- -d ./database/dbConnect.ts",
+    "migration:generate": "cd backend && npm run typeorm migration:generate -- -d ./database/dbConnect.ts",
+    "migration:create": "cd backend && npm run typeorm migration:create",
+    "entity:create": "cd backend && npm run typeorm entity:create",
+    "subscriber:create": "cd backend && npm run typeorm subscriber:create"
   },
   "repository": {
     "type": "git",
@@ -31,5 +39,8 @@
   "homepage": "https://github.com/realkamran/e-commerce#readme",
   "dependencies": {
     "concurrently": "^8.2.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
   }
 }

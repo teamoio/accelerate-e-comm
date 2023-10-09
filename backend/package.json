@@ -4,9 +4,18 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start:dev": "nodemon server.ts",
+    "server:dev": "nodemon server.ts",
     "build": "webpack --config webpack.config.js",
-    "start:prod": "node ./dist/server.js"
+    "server:prod": "node ./dist/server.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./database/dbConnect.ts",
+    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./database/dbConnect.ts",
+    "schema:sync": "npm run typeorm schema:sync -- -d ./database/dbConnect.ts",
+    "migration:show": "npm run typeorm migration:show -- -d ./database/dbConnect.ts",
+    "migration:generate": "npm run typeorm migration:generate -- -d ./database/dbConnect.ts",
+    "migration:create": "npm run typeorm migration:create",
+    "entity:create": "npm run typeorm entity:create",
+    "subscriber:create": "npm run typeorm subscriber:create"
   },
   "keywords": [],
   "author": "",
