@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
-import entityRegistrar from "./entityRegister";
+import entityRegistrar from "../utils/entityRegister";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
