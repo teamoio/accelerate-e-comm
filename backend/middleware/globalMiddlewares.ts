@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import exampleMiddleware from "./exampleMiddleware";
+import setCache from "./setCache";
 
 const globalMiddlewares = (app: any, dir: string) => {
   app.use(express.static("./public"));
@@ -11,6 +12,7 @@ const globalMiddlewares = (app: any, dir: string) => {
   app.use(cors());
   app.use(express.json());
   app.use(morgan("tiny"));
+  app.use(setCache);
 };
 
 export default globalMiddlewares;
