@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import CustomHttpError from "../utils/CustomError";
 
-// const { CustomHttpError } = require("../errors/CustomError");
-
 function errorHandler(
   err: any,
   req: Request,
@@ -15,6 +13,13 @@ function errorHandler(
 
   // if the error is a custom defined error
   if (err instanceof CustomHttpError) {
+    const codes = [200, 201, 400, 401, 404, 403, 422, 500];
+
+    // Get matched code
+    const findCode = codes.find((code) => code == err.httpStatusCode);
+
+    if (!findCode) err.httpStatusCode = 500;
+    else err.httpStatusCode = findCode;
     httpStatusCode = err.httpStatusCode;
     message = err.message;
   } else {
@@ -45,12 +50,11 @@ function errorHandler(
 
   // return the standard error response
   res.status(httpStatusCode).send({
-    error: {
-      message: message,
-      timestamp: err.timestamp || undefined,
-      documentationUrl: err.documentationUrl || undefined,
-      stackTrace: stackTrace,
-    },
+    code: httpStatusCode,
+    error: true,
+    message: message,
+    timestamp: err.timestamp || undefined,
+    stackTrace: stackTrace,
   });
 
   return next(err);

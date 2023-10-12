@@ -13,6 +13,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_DATABASE || "test",
   logging: true,
+  synchronize:false,
   entities: entityRegistrar(),
   migrations: [__dirname + "/migrations/**/*.ts"],
 });

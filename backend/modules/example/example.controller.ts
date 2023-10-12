@@ -1,12 +1,55 @@
 import { AppDataSource } from "../../database/dbConnect";
 import { Example } from "../../entities/example";
+import CustomHttpError from "../../utils/CustomError";
+import { error, success } from "../../utils/response";
 
 const exampleRepo = AppDataSource.getRepository(Example);
 
-export const getExamples = async (req: any, res: any) => {
-  //find all records
-  const allRecords = await exampleRepo.find();
-  res.status(200).json({ success: true, data: allRecords });
+export const getExamples = async (req: any, res: any, next: any) => {
+  try {
+    // read the "name" query parameter
+    let name = req.query.name;
+
+    if (name) {
+      res.status(200).json(success(res.statusCode, `Hello, ${name}!`, [{name:'karman'}]));
+    } else {
+      // initialize a 400 error to send to the
+      // error handling layer
+      res
+        .status(400)
+        .json(error(400, `Required query parameter "name" is missing!`));
+    }
+  } catch (err) {
+    // catch any error and send it
+    // to the error handling middleware
+    res
+        .status(400)
+        .json(error(400, `Required query parameter "name" is missing!`));
+  }
+
+
+  // try {
+  //   // read the "name" query parameter
+  //   let name = req.query.name;
+
+  //   if (name) {
+  //     res.status(200).json(success(res.statusCode, `Hello, ${name}!`, []));
+  //   } else {
+  //     // initialize a 400 error to send to the
+  //     // error handling layer
+      // throw new CustomHttpError(
+      //   400,
+      //   `Required query parameter "name" is missing!`
+      // );
+  //     // res
+  //     //   .status(400)
+  //     //   .json(error(400, `Required query parameter "name" is missing!`));
+  //   }
+  // } catch (e) {
+  //   // catch any error and send it
+  //   // to the error handling middleware
+  //   return next(e);
+  // }
 };
 
 export const getExample = async (req: any, res: any) => {
