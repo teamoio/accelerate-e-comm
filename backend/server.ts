@@ -2,7 +2,7 @@ import express from "express";
 import "reflect-metadata";
 import globalMiddlewares from "./middleware/globalMiddlewares";
 import dotenv from "dotenv";
-import ExampleRoutes from "./modules/example";
+// import ExampleRoutes from "./modules/example";
 import dbConnect from "./database/dbConnect";
 import errorHandler from "./middleware/errorHandling";
 dotenv.config();
@@ -22,7 +22,7 @@ app.get("/", (req: any, res: any) => {
 //using middleware for all the routes except for '/' route
 // app.use(exampleMiddleware3);
 
-app.use("/api/example", ExampleRoutes);
+// app.use("/api/example", ExampleRoutes);
 
 app.all("*", (req: any, res: any) => {
   res.status(404).send("<h1>Resource not found</h1>");

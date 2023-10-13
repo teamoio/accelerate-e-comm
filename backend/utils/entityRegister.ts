@@ -1,5 +1,17 @@
-import { Example } from "../entities/example";
+import { User } from "../entities/user";
+import { UserAddress } from "../entities/userAddress";
+import { Country } from "../entities/country";
+import { Payment } from "../entities/payment";
+import { Order } from "../entities/order";
+import { OrderAddress } from "../entities/orderAddress";
 
-const entityRegistrar = () => [Example];
+const entityRegisterer = () => [
+  User,
+  UserAddress,
+  Country,
+  Payment,
+  Order,
+  OrderAddress,
+];
 
-export default entityRegistrar;
+export default entityRegisterer;

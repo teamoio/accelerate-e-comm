@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
-import entityRegistrar from "../utils/entityRegister";
+import entityRegisterer from "../utils/entityRegister";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_DATABASE || "test",
   logging: true,
-  entities: entityRegistrar(),
+  entities: entityRegisterer(),
   migrations: [__dirname + "/migrations/**/*.ts"],
 });
 
