@@ -18,14 +18,14 @@
     "prod": "concurrently \"npm run server:prod\" \"npm run start\"",
     "setup": "npm install && npm run server-install && npm run migration:run && npm run dev",
     "deploy": "npm install && npm run client-install && npm run server-install && npm run build && npm run migration:run && npm run prod",
-    "migration:run": "cd backend && ts-node ./node_modules/typeorm/cli.js migration:run -d ./database/dbConnect.ts",
-    "migration:revert": "cd backend && ts-node ./node_modules/typeorm/cli.js migration:revert -d ./database/dbConnect.ts",
-    "schema:sync": "cd backend && npm run typeorm schema:sync -- -d ./database/dbConnect.ts",
-    "migration:show": "cd backend && npm run typeorm migration:show -- -d ./database/dbConnect.ts",
-    "migration:generate": "cd backend && npm run typeorm migration:generate -- -d ./database/dbConnect.ts",
-    "migration:create": "cd backend && npm run typeorm migration:create",
-    "entity:create": "cd backend && npm run typeorm entity:create",
-    "subscriber:create": "cd backend && npm run typeorm subscriber:create"
+    "migration:run": "cd backend && npm run migration:run",
+    "migration:revert": "cd backend && npm run migration:revert",
+    "schema:sync": "cd backend && npm run schema:sync",
+    "migration:show": "cd backend && npm run migration:show",
+    "migration:generate": "cd backend && npm run migration:generate",
+    "migration:create": "cd backend && npm run migration:create",
+    "entity:create": "cd backend && npm run entity:create",
+    "subscriber:create": "cd backend && npm run subscriber:create"
   },
   "repository": {
     "type": "git",

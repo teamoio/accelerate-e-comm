@@ -1,6 +1,6 @@
 import express from "express";
 import "reflect-metadata";
-import globalMiddlewares from "./middleware/globalMiddlewares";
+import globalMiddlewares from "./utils/globalMiddlewares";
 import dotenv from "dotenv";
 // import ExampleRoutes from "./modules/example";
 import dbConnect from "./database/dbConnect";
@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 //this middleware is to used for including global things
-globalMiddlewares(app, __dirname);
+globalMiddlewares(app);
 
 //below middleware will apply to all the routes starting from '/api' like '/api/example'
 // app.use("/api", exampleMiddleware2);
