@@ -33,7 +33,7 @@ export class UserAddress {
   @Column()
   postalCode: string;
 
-  @OneToOne(() => Country, (country) => country.address)
+  @OneToOne(() => Country)
   @JoinColumn()
   country: Country;
 

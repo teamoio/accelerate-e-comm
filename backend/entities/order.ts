@@ -5,10 +5,12 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { User } from "./user";
 import { Payment } from "./payment";
 import { OrderAddress } from "./orderAddress";
+import { OrderItem } from "./orderItem";
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
@@ -29,5 +31,12 @@ export class Order {
   @OneToMany(() => OrderAddress, (orderAddress) => orderAddress.order)
   orderAddresses: OrderAddress[];
 
-  //add order items
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+  orderItems: OrderItem[];
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @CreateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

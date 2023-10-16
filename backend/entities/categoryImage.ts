@@ -2,17 +2,21 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  ManyToOne,
   CreateDateColumn,
-  OneToOne,
 } from "typeorm";
+import { Category } from "./category";
 
 @Entity()
-export class Country {
+export class CategoryImage {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string;
+  imageUrl: string;
+
+  @ManyToOne(() => Category, (category) => category.images)
+  category: Category;
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

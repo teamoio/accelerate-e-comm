@@ -1,18 +1,25 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  JoinColumn,
   CreateDateColumn,
   OneToOne,
+  OneToMany,
 } from "typeorm";
+import { User } from "./user";
+import { CartItem } from "./cartItem";
 
 @Entity()
-export class Country {
+export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  cartItems: CartItem[];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
