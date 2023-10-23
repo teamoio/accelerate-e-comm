@@ -2,6 +2,7 @@ import "reflect-metadata";
 import express from "express";
 import globalMiddlewares from "./utils/globalMiddlewares";
 import categoryRoutes from "./modules/category/category.routes";
+import categoryImageRoutes from "./modules/categoryImage/categoryImage.routes";
 // import errorHandler from "./middleware/errorHandling";
 
 const app = express();
@@ -13,6 +14,7 @@ app.get("/", (req: any, res: any) => {
 });
 
 app.use("/api/category", categoryRoutes);
+app.use("/api/category-image", categoryImageRoutes);
 
 // app.use(errorHandler);
 
