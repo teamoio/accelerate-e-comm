@@ -3,6 +3,7 @@ import express from "express";
 import globalMiddlewares from "./utils/globalMiddlewares";
 import categoryRoutes from "./modules/category/category.routes";
 import categoryImageRoutes from "./modules/categoryImage/categoryImage.routes";
+import productRoutes from "./modules/product/product.routes";
 // import errorHandler from "./middleware/errorHandling";
 
 const app = express();
@@ -15,6 +16,7 @@ app.get("/", (req: any, res: any) => {
 
 app.use("/api/category", categoryRoutes);
 app.use("/api/category-image", categoryImageRoutes);
+app.use("/api/product", productRoutes);
 
 // app.use(errorHandler);
 
