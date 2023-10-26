@@ -14,6 +14,22 @@ export const createUser = async (req: any, res: any) => {
           "Missing required fields. Please provide all necessary user details.",
       });
     }
+
+    const existingUser = await userRepo.findOne({
+      where: [{ email: email }, { name: name }],
+    });
+
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({
+          message: "User with this email already exists.",
+        });
+      } else {
+        return res.status(400).json({
+          message: "User with this name already exists.",
+        });
+      }
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user: User = new User();
     user.name = name;
@@ -28,6 +44,7 @@ export const createUser = async (req: any, res: any) => {
       user: result,
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
       message: "User creation failed!",
       error: error,
