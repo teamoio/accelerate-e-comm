@@ -14,6 +14,9 @@ export class Country {
   @Column()
   name: string;
 
+  @Column()
+  code: number;
+
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
 

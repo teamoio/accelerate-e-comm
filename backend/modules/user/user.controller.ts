@@ -24,7 +24,7 @@ export const createUser = async (req: any, res: any) => {
         return res.status(400).json({
           message: "User with this email already exists.",
         });
-      } else {
+      } else if (existingUser.name === name) {
         return res.status(400).json({
           message: "User with this name already exists.",
         });

@@ -6,6 +6,7 @@ import categoryImageRoutes from "./modules/categoryImage/categoryImage.routes";
 import productRoutes from "./modules/product/product.routes";
 import productImageRoutes from "./modules/productImage/productImage.routes";
 import userRoutes from "./modules/user/user.routes";
+import countryRoutes from "./modules/country/country.routes";
 // import errorHandler from "./middleware/errorHandling";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use("/api/category-image", categoryImageRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/product-image", productImageRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/country", countryRoutes);
 
 // app.use(errorHandler);
 
