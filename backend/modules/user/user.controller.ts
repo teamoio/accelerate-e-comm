@@ -1,54 +1,121 @@
 import { User } from "../../entities/user";
 import { AppDataSource } from "../../database/dbConnect";
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+import { UserService } from "./UserService";
+import { config } from "dotenv";
 
 const userRepo = AppDataSource.getRepository(User);
 
-export const createUser = async (req: any, res: any) => {
+const userService = new UserService();
+
+export const signup = async (req: any, res: any) => {
   try {
     const { name, email, password, status, is_admin } = req.body;
 
-    if (!name || !email || !password || !status || !is_admin) {
+    if (!name || !email || !password || !status || is_admin === undefined) {
       return res.status(400).json({
         message:
           "Missing required fields. Please provide all necessary user details.",
       });
     }
 
-    const existingUser = await userRepo.findOne({
-      where: [{ email: email }, { name: name }],
-    });
-
+    const existingUser = await userService.findByEmail(email);
     if (existingUser) {
-      if (existingUser.email === email) {
-        return res.status(400).json({
-          message: "User with this email already exists.",
-        });
-      } else if (existingUser.name === name) {
-        return res.status(400).json({
-          message: "User with this name already exists.",
-        });
-      }
+      return res.status(400).json({ message: "User already exists" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user: User = new User();
-    user.name = name;
-    user.email = email;
-    user.password = hashedPassword;
-    user.status = status;
-    user.is_admin = is_admin;
 
-    const result = await userRepo.save(user);
+    const result = await userService.create(
+      email,
+      password,
+      name,
+      status,
+      is_admin,
+      res
+    );
+
+    if (!result) {
+      return res
+        .status(500)
+        .json({ message: "User creation failed. Please try again later." });
+    }
+
+    const token = jwt.sign(
+      { email: result.email, id: result.id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "User created successfully", user: result, token });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const login = async (req: any, res: any) => {
+  try {
+    const { email, password } = req.body;
+    const user = await userService.findByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { email: user.email, id: user.id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    return res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Login failed. Please try again later." });
+  }
+};
+
+export const logout = (req: any, res: any) => {
+  res.clearCookie("jwtToken");
+  return res.status(200).json({ message: "Logout successful" });
+};
+
+export const createUser = async (req: any, res: any) => {
+  try {
+    const { name, email, password, status, is_admin } = req.body;
+
+    if (!name || !email || !password || !status || is_admin === undefined) {
+      return res.status(400).json({
+        message:
+          "Missing required fields. Please provide all necessary user details.",
+      });
+    }
+
+    const result = await userService.create(
+      email,
+      password,
+      name,
+      status,
+      is_admin,
+      res
+    );
     return res.status(200).json({
       message: "User created successfully!",
       user: result,
     });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      message: "User creation failed!",
-      error: error,
-    });
+  } catch (error: any) {
+    return error;
   }
 };
 
