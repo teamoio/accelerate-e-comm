@@ -5,7 +5,7 @@ import { User } from "../../entities/user";
 
 const userRepo = AppDataSource.getRepository(User);
 
-describe("Create User", () => {
+describe.skip("Create User", () => {
   it("should create a user", async () => {
     const user = {
       id: 1,

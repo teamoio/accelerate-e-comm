@@ -48,6 +48,17 @@ export class UserService {
     }
   }
 
+  async findById(id: any) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: id },
+      });
+      return user;
+    } catch (error) {
+      throw new Error("Error while finding user by Id: " + error);
+    }
+  }
+
   async findByEmail(email: string) {
     try {
       const user = await this.userRepository.findOne({
