@@ -2,7 +2,9 @@ import { User } from "../../entities/user";
 import { AppDataSource } from "../../database/dbConnect";
 const bcrypt = require("bcrypt");
 import { UserService } from "./UserService";
+import { userValidatorSchema } from "./validations";
 const passport = require("passport");
+import { ValidationError } from "joi";
 
 const userRepo = AppDataSource.getRepository(User);
 
@@ -15,13 +17,16 @@ export const login = async (req: any, res: any, next: any) => {
       if (err) {
         return next(err);
       }
+
       if (!user) {
         return res.status(401).send({ message: info.message });
       }
+
       req.logIn(user, (err: Error) => {
         if (err) {
           return next(err);
         }
+
         return res.redirect("/");
       });
     }
@@ -32,12 +37,14 @@ export const logout = (req: any, res: any, next: any) => {
     if (err) {
       return next(err);
     }
+
     res.redirect("/");
   });
 };
 
 export const signup = async (req: any, res: any) => {
   try {
+    await userValidatorSchema.validateAsync(req.body);
     const { name, email, password, status, is_admin } = req.body;
 
     if (!name || !email || !password || !status || is_admin === undefined) {
@@ -71,34 +78,9 @@ export const signup = async (req: any, res: any) => {
       .status(200)
       .json({ message: "User created successfully", user: result });
   } catch (error) {
-    return error;
-  }
-};
-
-export const createUser = async (req: any, res: any) => {
-  try {
-    const { name, email, password, status, is_admin } = req.body;
-
-    if (!name || !email || !password || !status || is_admin === undefined) {
-      return res.status(400).json({
-        message:
-          "Missing required fields. Please provide all necessary user details.",
-      });
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
     }
-
-    const result = await userService.create(
-      email,
-      password,
-      name,
-      status,
-      is_admin,
-      res
-    );
-    return res.status(200).json({
-      message: "User created successfully!",
-      user: result,
-    });
-  } catch (error: any) {
     return error;
   }
 };

@@ -8,7 +8,6 @@ import {
   JoinColumn,
 } from "typeorm";
 
-import { Country } from "./country";
 import { Order } from "./order";
 
 @Entity()
@@ -30,10 +29,6 @@ export class OrderAddress {
 
   @Column()
   postalCode: string;
-
-  @OneToOne(() => Country)
-  @JoinColumn()
-  country: Country;
 
   @ManyToOne(() => Order, (order) => order.orderAddresses)
   order: Order;

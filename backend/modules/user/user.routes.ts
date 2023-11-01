@@ -2,7 +2,6 @@ import express from "express";
 const router = express.Router();
 
 import {
-  createUser,
   getAllUsers,
   getUserById,
   updateUser,
@@ -12,7 +11,6 @@ import {
   logout,
 } from "./user.controller";
 
-router.post("/", createUser);
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);
 router.put("/:id", updateUser);
