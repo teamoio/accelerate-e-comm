@@ -3,8 +3,8 @@ import { AppDataSource } from "../../database/dbConnect";
 const bcrypt = require("bcrypt");
 import { UserService } from "./UserService";
 import { userValidatorSchema } from "./validations";
-const passport = require("passport");
 import { ValidationError } from "joi";
+const passport = require("passport");
 
 const userRepo = AppDataSource.getRepository(User);
 
@@ -146,6 +146,7 @@ export const updateUser = async (req: any, res: any) => {
         message: "User not found!",
       });
     } else {
+      await userValidatorSchema.validateAsync(req.body);
       const { name, email, password, status, is_admin } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -162,6 +163,9 @@ export const updateUser = async (req: any, res: any) => {
       });
     }
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(400).json({
       message: "User update failed!",
       error: error,

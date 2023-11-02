@@ -1,12 +1,15 @@
 import { Product } from "../../entities/product";
 import { AppDataSource } from "../../database/dbConnect";
 import { ProductImage } from "../../entities/productImage";
+import { productImageValidatorSchema } from "./validations/index";
+import { ValidationError } from "joi";
 
 const productRepo = AppDataSource.getRepository(Product);
 const productImageRepo = AppDataSource.getRepository(ProductImage);
 
 export const createProductImage = async (req: any, res: any) => {
   try {
+    await productImageValidatorSchema.validateAsync(req.body);
     const { product, imageUrl } = req.body;
 
     const foundProduct = await productRepo.findOne({
@@ -34,6 +37,9 @@ export const createProductImage = async (req: any, res: any) => {
       productImage: result,
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(400).json({
       message: "Product image creation failed!",
       error: error,
@@ -94,6 +100,7 @@ export const getProductImageById = async (req: any, res: any) => {
 
 export const updateProductImage = async (req: any, res: any) => {
   try {
+    await productImageValidatorSchema.validateAsync(req.body);
     const { id } = req.params;
     const { product, imageUrl } = req.body;
 
@@ -125,6 +132,9 @@ export const updateProductImage = async (req: any, res: any) => {
       });
     }
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(400).json({
       message: "Product image update failed!",
       error: error,

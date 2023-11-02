@@ -1,27 +1,33 @@
 import { Category } from "../../entities/category";
 import { AppDataSource } from "../../database/dbConnect";
+import { categoryValidatorSchema } from "./validations";
+import { ValidationError } from "joi";
 
 const categoryRepo = AppDataSource.getRepository(Category);
 
 export const createCategory = async (req: any, res: any) => {
-  const category: Category = new Category();
-  category.name = req.body.name;
-  category.description = req.body.description;
-  category.is_active = req.body.is_active;
-  await categoryRepo
-    .save(category)
-    .then((result) => {
-      res.status(200).json({
-        message: "Category created successfully!",
-        category: result,
-      });
-    })
-    .catch((error) => {
-      res.status(400).json({
-        message: "Category created failed!",
-        error: error,
-      });
+  try {
+    const category: Category = new Category();
+    await categoryValidatorSchema.validateAsync(req.body);
+    const { name, description, is_active } = req.body;
+    category.name = name;
+    category.description = description;
+    category.is_active = is_active;
+
+    const result = await categoryRepo.save(category);
+    res.status(200).json({
+      message: "Category created successfully!",
+      category: result,
     });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(400).json({
+      message: "Category created failed!",
+      error: error,
+    });
+  }
 };
 
 export const getAllCategories = async (req: any, res: any) => {
@@ -70,6 +76,7 @@ export const getCategoryById = async (req: any, res: any) => {
 
 export const updateCategory = async (req: any, res: any) => {
   try {
+    await categoryValidatorSchema.validateAsync(req.body);
     const categoryId = req.params.id;
     const updatedCategoryData = {
       name: req.body.name,
@@ -94,6 +101,9 @@ export const updateCategory = async (req: any, res: any) => {
       category: updatedCategory,
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(400).json({
       message: "Category update failed!",
       error: error,

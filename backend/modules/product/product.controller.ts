@@ -1,12 +1,15 @@
 import { Product } from "../../entities/product";
 import { AppDataSource } from "../../database/dbConnect";
 import { Category } from "../../entities/category";
+import { productValidatorSchema } from "./validations";
+import { ValidationError } from "joi";
 
 const productRepo = AppDataSource.getRepository(Product);
 const categoryRepo = AppDataSource.getRepository(Category);
 
 export const createProduct = async (req: any, res: any) => {
   try {
+    await productValidatorSchema.validateAsync(req.body);
     const { name, description, quantity, price, status, is_active, category } =
       req.body;
 
@@ -51,6 +54,9 @@ export const createProduct = async (req: any, res: any) => {
       });
     }
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(400).json({
       message: "Product creation failed!",
       error: error,
@@ -123,6 +129,7 @@ export const updateProduct = async (req: any, res: any) => {
         message: "Product not found!",
       });
     } else {
+      await productValidatorSchema.validateAsync(req.body);
       const {
         name,
         description,
@@ -159,6 +166,9 @@ export const updateProduct = async (req: any, res: any) => {
       }
     }
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(400).json({
       message: "Product update failed!",
       error: error,
