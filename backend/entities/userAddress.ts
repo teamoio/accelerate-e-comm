@@ -8,7 +8,6 @@ import {
   JoinColumn,
 } from "typeorm";
 import { User } from "./user";
-import { Country } from "./country";
 
 @Entity()
 export class UserAddress {
@@ -32,10 +31,6 @@ export class UserAddress {
 
   @Column()
   postalCode: string;
-
-  @OneToOne(() => Country)
-  @JoinColumn()
-  country: Country;
 
   @Column()
   isdefault: boolean;

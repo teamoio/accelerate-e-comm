@@ -3,14 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  OneToOne,
+  CreateDateColumn,
 } from "typeorm";
 import { UserAddress } from "./userAddress";
 import { Payment } from "./payment";
 import { Order } from "./order";
 import { Catalog } from "./catalog";
 import { CatalogUserGroup } from "./catalogUserGroup";
-import { Cart } from "./cart";
 
 @Entity()
 export class User {
@@ -25,6 +24,12 @@ export class User {
 
   @Column()
   password: string; // store hashed password as a string
+
+  @Column()
+  is_admin: boolean;
+
+  @Column()
+  status: string;
 
   @OneToMany(() => UserAddress, (address) => address.user)
   addresses: UserAddress[];
@@ -44,9 +49,9 @@ export class User {
   )
   catalogUserGroups: CatalogUserGroup[];
 
-  @Column()
+  @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
 
-  @Column()
+  @CreateDateColumn({ type: "timestamp" })
   updatedAt: Date;
 }

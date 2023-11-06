@@ -1,40 +1,50 @@
 import { CategoryImage } from "../../entities/categoryImage";
 import { AppDataSource } from "../../database/dbConnect";
 import { Category } from "../../entities/category";
+import { categoryImageValidatorSchema } from "./validations";
+import { ValidationError } from "joi";
 
 const categoryImageRepo = AppDataSource.getRepository(CategoryImage);
 const categoryRepo = AppDataSource.getRepository(Category);
 
 export const createCategoryImage = async (req: any, res: any) => {
-  const categoryImage: CategoryImage = new CategoryImage();
+  try {
+    await categoryImageValidatorSchema.validateAsync(req.body);
+    const { category, imageUrl } = req.body;
 
-  categoryImage.imageUrl = req.body.imageUrl;
-  const categoryId = req.body.categoryId;
-
-  const categoryExists = await categoryRepo.findOne({
-    where: { id: categoryId },
-  });
-
-  if (!categoryExists) {
-    res.status(404).json({
-      message: "Category not found!",
+    const categoryExists = await categoryRepo.findOne({
+      where: { id: category },
     });
-  } else {
-    categoryImage.category = categoryExists;
-    await categoryImageRepo
-      .save(categoryImage)
-      .then((result) => {
-        res.status(200).json({
-          message: "Category image created successfully!",
-          categoryImage: result,
-        });
-      })
-      .catch((error) => {
-        res.status(400).json({
-          message: "Category image creation failed!",
-          error: error,
-        });
+
+    if (!categoryExists) {
+      return res.status(404).json({
+        message: "Category not found!",
       });
+    }
+
+    if (!category || !imageUrl) {
+      return res.status(400).json({
+        message:
+          "Missing required fields. Please provide all necessary category image details.",
+      });
+    }
+    const categoryImage: CategoryImage = new CategoryImage();
+    categoryImage.category = category;
+    categoryImage.imageUrl = imageUrl;
+
+    const result = await categoryImageRepo.save(categoryImage);
+    return res.status(200).json({
+      message: "Category image created successfully!",
+      categoryImage: result,
+    });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
+    return res.status(400).json({
+      message: "Category image creation failed!",
+      error: error,
+    });
   }
 };
 
@@ -93,6 +103,7 @@ export const updateCategoryImage = async (req: any, res: any) => {
   const id = req.params.id;
 
   try {
+    await categoryImageValidatorSchema.validateAsync(req.body);
     const categoryImage = await categoryImageRepo.findOne({
       where: { id: id },
       relations: ["category"],
@@ -104,9 +115,9 @@ export const updateCategoryImage = async (req: any, res: any) => {
       });
     }
 
-    const { imageUrl, categoryId } = req.body;
+    const { imageUrl, category } = req.body;
 
-    if (!imageUrl || !categoryId) {
+    if (!imageUrl || !category) {
       return res.status(400).json({
         message:
           "Both imageUrl and categoryId are required for updating the category image.",
@@ -114,7 +125,7 @@ export const updateCategoryImage = async (req: any, res: any) => {
     }
 
     const categoryExists = await categoryRepo.findOne({
-      where: { id: categoryId },
+      where: { id: category },
     });
 
     if (!categoryExists) {
@@ -124,7 +135,7 @@ export const updateCategoryImage = async (req: any, res: any) => {
     }
 
     categoryImage.imageUrl = imageUrl;
-    categoryImage.category = categoryExists;
+    categoryImage.category = category;
 
     const updatedCategoryImage = await categoryImageRepo.save(categoryImage);
 
@@ -133,6 +144,9 @@ export const updateCategoryImage = async (req: any, res: any) => {
       categoryImage: updatedCategoryImage,
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({
       message: "Error in updating category image.",
       error: error,

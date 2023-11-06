@@ -8,7 +8,6 @@ const categoryImageRepo = AppDataSource.getRepository(CategoryImage);
 describe("Get Category Images", () => {
   it("should return all category images", async () => {
     const mockCategoryImages = [
-      // Mock category images data as needed
       { id: 1, imageUrl: "image1.jpg", category: { id: 1, name: "Category1" } },
       { id: 2, imageUrl: "image2.jpg", category: { id: 2, name: "Category2" } },
     ];
@@ -17,7 +16,7 @@ describe("Get Category Images", () => {
       .spyOn(categoryImageRepo, "find")
       .mockResolvedValueOnce(mockCategoryImages as any);
 
-    const res = await request(app).get("/api/category-image"); // Replace with the actual endpoint
+    const res = await request(app).get("/api/category-image");
     expect(res.status).toEqual(200);
     expect(res.body.message).toEqual("Category images retrieved successfully!");
     expect(res.body.categoryImages).toEqual(mockCategoryImages);
@@ -26,7 +25,7 @@ describe("Get Category Images", () => {
   it("should return 404 if no category images found", async () => {
     jest.spyOn(categoryImageRepo, "find").mockResolvedValueOnce([]);
 
-    const res = await request(app).get("/api/category-image"); // Replace with the actual endpoint
+    const res = await request(app).get("/api/category-image");
     expect(res.status).toEqual(404);
     expect(res.body.message).toEqual("Category images not found!");
   });
@@ -35,7 +34,7 @@ describe("Get Category Images", () => {
     const error = new Error("Internal server error");
     jest.spyOn(categoryImageRepo, "find").mockRejectedValueOnce(error);
 
-    const res = await request(app).get("/api/category-image"); // Replace with the actual endpoint
+    const res = await request(app).get("/api/category-image");
     expect(res.status).toEqual(500);
     expect(res.body.message).toEqual("Error in retrieving category images");
   });
